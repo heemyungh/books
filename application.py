@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, redirect
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
  
@@ -16,16 +16,19 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/search", methods=["POST"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
     """Searches database for author or title matching given string"""
-    terms = request.form.get("search").capitalize()
-    # search a join table
-    authors = db.execute("SELECT author, id FROM authors WHERE author LIKE :terms",
-                          {"terms": '%'+terms+'%'}).fetchall()
-    books = db.execute("SELECT title, isbn FROM books WHERE title LIKE :terms",
-                          {"terms": '%'+terms+'%'}).fetchall()
-    return render_template("index.html", authors=authors, books=books)
+    if request.method == "POST":
+        terms = request.form.get("search").capitalize()
+        # search a join table
+        authors = db.execute("SELECT author, id FROM authors WHERE author LIKE :terms",
+                            {"terms": '%'+terms+'%'}).fetchall()
+        books = db.execute("SELECT title, isbn FROM books WHERE title LIKE :terms",
+                            {"terms": '%'+terms+'%'}).fetchall()
+        return render_template("index.html", authors=authors, books=books)
+    else:
+        return redirect("/")
 
 
 @app.route("/book/<string:isbn>")
