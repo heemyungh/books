@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book Search
+{% endblock %}
+
+{% block body %}
+    <h1>Search for title or author</h1>
+
+    <form action="{{ url_for('search') }}" method="post">
+
+        <div class="form-group">
+            <input autofocus class="form-control" name="search" autocomplete="off" placeholder="Search terms (case sensitive)">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Search</button>
+        </div>
+
+    </form>
+    {% if searches %}
+        <table class="table">
+            <tr class="thead-dark">
+                <td>Title</td>
+                <td>Author</td>
+                <td>Year</td>
+                <td>ISBN</td>
+            </tr>
+            {% for entry in searches %}
+                <tr>
+                    <td>{{ entry["title"] }}</td>
+                    <td>{{ entry["author"] }}</td>
+                    <td>{{ entry["year"] }}</td>
+                    <td>{{ entry["isbn"] }}</td>
+                </tr>
+
+            {% endfor %}
+        </table>
+    {% endif %}
+
+{% endblock %}
