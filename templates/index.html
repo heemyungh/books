@@ -10,7 +10,7 @@
     <form action="{{ url_for('search') }}" method="post">
 
         <div class="form-group">
-            <input autofocus class="form-control" name="search" autocomplete="off" placeholder="Search terms (case sensitive)">
+            <input autofocus class="form-control" name="search" autocomplete="off" placeholder="Title or Author">
         </div>
 
         <div class="form-group">
@@ -18,24 +18,28 @@
         </div>
 
     </form>
-    {% if searches %}
-        <table class="table">
-            <tr class="thead-dark">
-                <td>Title</td>
-                <td>Author</td>
-                <td>Year</td>
-                <td>ISBN</td>
-            </tr>
-            {% for entry in searches %}
-                <tr>
-                    <td>{{ entry["title"] }}</td>
-                    <td>{{ entry["author"] }}</td>
-                    <td>{{ entry["year"] }}</td>
-                    <td>{{ entry["isbn"] }}</td>
-                </tr>
+    
+    {% if books %}
+    <h2>Books</h2>
+        <ul>
+            {% for entry in books %}
+                <li>
+                    <a href="/book/{{ entry['isbn'] }}">{{ entry["title"] }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if authors %}
+    <h2>Authors</h2>
+        <ul>
+            {% for entry in authors %}
+                <li>
+                    <a href="/author/{{ entry['id'] }}">{{ entry["author"] }}</a>
+                </li>
 
             {% endfor %}
-        </table>
+        </ul>
     {% endif %}
 
 {% endblock %}

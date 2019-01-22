@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ book["title"] }}
+{% endblock %}
+
+{% block body %}
+
+<h2>{{ book["title"] }}</h2>
+
+<table class="table">
+    <tr class="thead-dark">
+        <td>Author</td>
+        <td>Published</td>
+        <td>ISBN</td>
+    </tr>
+    <tr>
+        <td><a href="/author/{{ book['id'] }}">{{ book["author"] }}</a></td>
+        <td>{{ book["year"] }}</td>
+        <td>{{ book["isbn"] }}</td>
+    </tr>
+</table>
+
+{% endblock %}

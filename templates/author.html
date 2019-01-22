@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{ author["author"] }}
+{% endblock %}
+
+{% block body %}
+
+<h2>{{ author["author"] }}</h2>
+
+<ul>
+{% for book in books %}
+    <li><a href="/book/{{ book['isbn'] }}">{{ book["title"] }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

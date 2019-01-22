@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
  
@@ -12,14 +12,34 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html", searches=False)
+    return render_template("index.html")
 
 
 @app.route("/search", methods=["POST"])
 def search():
     """Searches database for author or title matching given string"""
-    terms = request.form.get("search")
+    terms = request.form.get("search").capitalize()
     # search a join table
-    searches = db.execute("SELECT title, author, year, isbn FROM authors INNER JOIN books ON authors.id = books.author_id WHERE title LIKE :terms OR author LIKE :terms",
+    authors = db.execute("SELECT author, id FROM authors WHERE author LIKE :terms",
                           {"terms": '%'+terms+'%'}).fetchall()
-    return render_template("index.html", searches=searches)
+    books = db.execute("SELECT title, isbn FROM books WHERE title LIKE :terms",
+                          {"terms": '%'+terms+'%'}).fetchall()
+    return render_template("index.html", authors=authors, books=books)
+
+
+@app.route("/book/<string:isbn>")
+def book(isbn):
+    """Returns information for particular book"""
+    book = db.execute("SELECT title, author, id, year, isbn FROM books INNER JOIN authors ON books.author_id = authors.id WHERE isbn = :isbn", 
+                      {"isbn": isbn}).fetchone()
+    return render_template("book.html", book=book)
+
+
+@app.route("/author/<string:id>")
+def author(id):
+    """Returns all books by particular author"""
+    author = db.execute("SELECT author FROM authors WHERE id=:id", 
+                        {"id":id}).fetchone()
+    books = db.execute("SELECT title, isbn FROM books WHERE author_id=:id", 
+                       {"id":id}).fetchall()
+    return render_template("author.html", author=author, books=books)
