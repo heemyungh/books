@@ -7,7 +7,6 @@
 {% block body %}
 
 <h2>{{ book["title"] }}</h2>
-
 <table class="table">
     <tr class="thead-dark">
         <td>Author</td>
@@ -20,5 +19,14 @@
         <td>{{ book["isbn"] }}</td>
     </tr>
 </table>
+{% if cover %}
+<img src="{{ cover }}">
 
+<footer class="page-footer font-small pt-4">
+    <div class="footer-copyright text-center py-3">
+        <small>Image courtesy of 
+        <a href="http://openlibrary.org/isbn/{{ book['isbn'] }}">Open Library</a> API.</small>
+      </div>
+</footer>
+{% endif %}
 {% endblock %}

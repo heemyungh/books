@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, render_template, request, url_for
 from sqlalchemy import create_engine
@@ -32,7 +33,11 @@ def book(isbn):
     """Returns information for particular book"""
     book = db.execute("SELECT title, author, id, year, isbn FROM books INNER JOIN authors ON books.author_id = authors.id WHERE isbn = :isbn", 
                       {"isbn": isbn}).fetchone()
-    return render_template("book.html", book=book)
+    # from https://openlibrary.org/dev/docs/api/covers
+    cover = f"http://covers.openlibrary.org/b/isbn/{book['isbn']}-M.jpg?default=false"
+    if requests.get(cover).status_code != 200:
+        cover = None
+    return render_template("book.html", book=book, cover=cover)
 
 
 @app.route("/author/<string:id>")
